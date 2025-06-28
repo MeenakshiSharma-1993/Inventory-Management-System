@@ -1,0 +1,172 @@
+<?php
+session_start();
+include './public/Database/connection.php';
+
+// Access control
+$user = $_SESSION['username'];
+if (!isset($user)) {
+    header("location: login.php");
+    exit();
+} else {
+    echo "<script>console.log('User logged in dashboard page: " . $user . "');</script>";
+}
+
+// DELETE user
+include './public/Database/delete-user.php';
+
+// EDIT user (fetch user data)
+$editUser = null;
+if (isset($_GET['edit'])) {
+    $editId = $_GET['edit'];
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE id = $editId");
+    $editUser = mysqli_fetch_assoc($result);
+}
+
+// UPDATE user
+include './public/Database/update-user.php';
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>IMS Dashboard</title>
+    <link rel="stylesheet" href="public/css/style.css">
+    <script src="https://kit.fontawesome.com/dfec668964.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'partial/app-sidebar.php'; ?>
+
+        <!-- Main Content -->
+        <div class="main">
+            <?php include 'partial/app-topnav.php'; ?>
+            <div class="content-container">
+
+                <!-- Create User Section -->
+                <?php 
+                // if ($editUser) { 
+                    ?>
+                    <!-- <div class="add-user">
+                        <h3><i class="fas fa-user-edit"></i> Edit User: <?= $editUser['first_name'] . ' ' . $editUser['last_name']; ?></h3>
+                        <div class="form-box">
+                        <form action="" method="POST">
+                            <input type="hidden" name="user_id" value="<?= $editUser['id']; ?>">
+
+                            <label for="first_name">FIRST NAME</label>
+                            <input type="text" name="first_name" value="<?= $editUser['first_name']; ?>" required>
+
+                            <label for="last_name">LAST NAME</label>
+                            <input type="text" name="last_name" value="<?= $editUser['last_name']; ?>" required>
+
+                            <label for="email">EMAIL</label>
+                            <input type="email" name="email" value="<?= $editUser['email']; ?>" required>
+
+                            <button type="submit" name="update_user" class="formBtn">Update</button>
+                            <a href="user-add.php" class="formBtn formLink">Cancel</a>
+                        </form>
+                        </div>
+                    </div> -->
+                <?php 
+            // } else {
+                 ?>
+                    <div class="add-user">
+                        <h3><i class="fas fa-user-plus"></i>Create User</h3>
+                        <div class="form-box">
+                            <form action="public/Database/add.php" method="POST">
+                                <label for="first_name">FIRST NAME</label>
+                                <input type="text" id="first_name" name="first_name" required>
+
+                                <label for="last_name">LAST NAME</label>
+                                <input type="text" id="last_name" name="last_name" required>
+
+                                <label for="email">EMAIL</label>
+                                <input type="email" id="email" name="email" required>
+
+                                <label for="password">PASSWORD</label>
+                                <input type="password" id="password" name="password" required>
+
+                                <button type="submit" class="formBtn">+ Add User</button>
+                            </form>
+
+                            <div id='errMsg'>
+                                <?php
+                                if (isset($_SESSION['error'])) {
+                                    $error = $_SESSION['error'];
+                                    echo "<script>alert(' $error ')</script>";
+                                    unset($_SESSION['error']);
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php
+            
+            // } 
+            ?>
+                <!-- List of Users Section -->
+                <!-- <div class="list-users">
+                    <div class="add-user">
+                        <h3><i class="fas fa-list"></i> List of Users</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>FIRST NAME</th>
+                                <th>LAST NAME</th>
+                                <th>EMAIL</th>
+                                <th>CREATED AT</th>
+                                <th>UPDATED AT</th>
+                                <th>Action</th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // include "./public/Database/show-user.php";
+
+                            // if (isset($_SESSION['user_data']) && is_array($_SESSION['user_data'])) {
+                            //     $user_data = $_SESSION['user_data'];
+                            //     $count = 0;
+                            //     foreach ($user_data as $user) {
+                            //         $userid = $user['id'];
+                                   // echo "<tr>
+                                            // <td>" . ++$count . "</td>
+                                            // <td>" . $user['first_name'] . "</td>
+                                            // <td>" . $user['last_name'] . "</td>
+                                            // <td>" . $user['email'] . "</td>
+                                            // <td>" . date('m, d, y @ h:i:s A', strtotime($user['created_at'])) . "</td>
+                                            // <td>" . date('m, d, y @ h:i:s A', strtotime($user['updated_at'])) . "</td>
+                                            
+                                            // </tr>";
+                                            // <td>
+                                            //     <a href='?edit=$userid' class='edit-btn'><i class='fa fa-pencil'></i>Edit</a>
+                                            //     <a href='?delete=$userid' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete this user?');\"><i class='fa fa-trash'></i>Delete</a>
+                                            // </td>
+                                        
+                            //     }
+                            // } else {
+                            //     echo "<tr><td colspan='7'>No users found.</td></tr>";
+                            // }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="footer-text">
+                <?php
+                // echo "<script>console.log('Total users: " . count($user_data ?? []) . "');</script>";
+                // echo $count ?? 0;
+                ?> Users
+            </p> -->
+        </div>
+    </div>
+</body>
+<script src="public/js/script.js"></script>
+
+</html> 
+
+
