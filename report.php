@@ -34,15 +34,15 @@ if (!isset($user)) {
                 <div class="sub-report-container">
                     <h3>Export Products </h3>
                     <div class="export-btn">
-                        <a href="public/Database/report_csv.php?report=product" rel="noopener noreferrer" target="_blank" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=product" rel="noopener noreferrer" target="_blank" class="formBtn reportBtn">PDF</a>
+                        <a href="public/Database/report_csv.php?report=product" class="formBtn reportBtn">Excel</a>
+                        <a href="public/Database/report_pdf.php?report=product" target="_blank" class="formBtn reportBtn">PDF</a>
                     </div>
                 </div>
                 <div class="sub-report-container">
                     <h3>Export Suppliers </h3>
                     <div class="export-btn">
                         <a href="public/Database/report_csv.php?report=supplier" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=supplier" class="formBtn reportBtn">PDF</a>
+                        <a href="public/Database/report_pdf.php?report=supplier"  target="_blank" class="formBtn reportBtn">PDF</a>
                     </div>
                 </div>
             </div>
@@ -51,14 +51,14 @@ if (!isset($user)) {
                     <h3>Export Deliveries </h3>
                     <div class="export-btn">
                         <a href="public/Database/report_csv.php?report=deliveries" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=deliveries" class="formBtn reportBtn">PDF</a>
+                        <a href="public/Database/report_pdf.php?report=deliveries" target="_blank" class="formBtn reportBtn">PDF</a>
                     </div>
                 </div>
                 <div class="sub-report-container">
                     <h3>Export Purchase Order </h3>
                     <div class="export-btn">
                         <a href="public/Database/report_csv.php?report=purchase_order" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=purchase_order" class="formBtn reportBtn">PDF</a>
+                        <a href="public/Database/report_pdf.php?report=purchase_order" target="_blank" class="formBtn reportBtn">PDF</a>
                     </div>
                 </div>
             </div>

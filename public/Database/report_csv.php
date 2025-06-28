@@ -73,17 +73,17 @@ if ($type === "deliveries") {
                 and order_product.supplier=supplier.id
                 and order_product.product=products.id
                 order by order_product.batch desc;";
-    $purchase_orders = mysqli_query($conn, $query);
+    $deliveries = mysqli_query($conn, $query);
     $is_header = true;
-    foreach ($purchase_orders as $purchase_order) {
-        $purchase_order['created_by'] = $user_name;
+    foreach ($deliveries as $delivery) {
+        $delivery['created_by'] = $user_name;
         if ($is_header) {
             echo implode("\t", array_keys($purchase_order)) . "\n";
             $is_header = false;
         }
         // Escape each value properly for Excel/TSV/CSV
-        escape_value_for_excel($purchase_order);
-        echo implode("\t", $purchase_order) . "\n";
+        escape_value_for_excel($delivery);
+        echo implode("\t", $delivery) . "\n";
     }
 }
 

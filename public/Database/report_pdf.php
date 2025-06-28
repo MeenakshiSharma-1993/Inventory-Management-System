@@ -89,8 +89,11 @@ $pdf = new PDF();
 $type = $_GET['report'];
 $report_header = [
     'product' => 'Product Report',
-    'supplier' => 'Supplier Report'
+    'supplier' => 'Supplier Report',
+    'deliveries' => 'Delivery Report',
+    'purchase_order' => 'Purchase Order Report',
 ];
+//Export Product Pdf
 if ($type === "product") {
     $header = [
         'id' => ['width' => 10],
@@ -160,6 +163,7 @@ if ($type === "product") {
     $pdf->FancyTable($header, $data);
     $pdf->Output();
 }
+//Export supplier Pdf
 if ($type === "supplier") {
     $header = [
         'id' => ['width' => 10],
@@ -185,7 +189,7 @@ if ($type === "supplier") {
                 'align' => 'C'
             ],
             'supplier_location' => [
-                'content' => $supplier['supplier_location']== "" ? "N/A" : $supplier['supplier_location'],
+                'content' => $supplier['supplier_location'] == "" ? "N/A" : $supplier['supplier_location'],
 
                 'align' => 'C'
             ],
@@ -205,6 +209,144 @@ if ($type === "supplier") {
                 'content' => date('M d, Y h:i:s A', strtotime($supplier['updated_at'])),
                 'align' => 'L'
             ]
+        ];
+    }
+
+    // Generate PDF
+    $pdf->SetFont('Arial', '', 20);
+    $pdf->AddPage();
+    $pdf->Cell(120);
+    $pdf->Cell(30, 10, $report_header[$type], 0, 0, 'C');
+    $pdf->SetFont('Arial', '', 10);
+    $pdf->Ln();
+    $pdf->Ln();
+    $pdf->FancyTable($header, $data);
+    $pdf->Output();
+}
+//Export deliveries Pdf
+if ($type === "deliveries") {
+    $header = [
+        'date_received' => ['width' => 65],
+        'qty_received' => ['width' => 50],
+        'product_name' => ['width' => 50],
+        'supplier_name' =>['width' => 50],
+        'created_by' => ['width' => 55],
+    ];
+    $query = "select date_received,qty_received,products.product_name AS product_name,supplier_name 
+                from order_product_history,order_product,supplier,products where order_product_history.order_product_id=order_product.id
+                and order_product.supplier=supplier.id
+                and order_product.product=products.id
+                order by order_product.batch desc;";
+    $deliveries = mysqli_query($conn, $query);
+
+    $user_name = $_SESSION['username'];
+    $data = [];
+    foreach ($deliveries as $delivery) {
+        $delivery['created_by'] = $user_name;
+        $data[] = [
+            'date_received' => [
+                'content' =>  date('M d, Y h:i:s A', strtotime($delivery['date_received'])),
+                'align' => 'C'
+            ],
+            'qty_received' => [
+                'content' => $delivery['qty_received'],
+                'align' => 'C'
+            ],
+            'product_name' => [
+                'content' => $delivery['product_name'],
+
+                'align' => 'L'
+            ],
+            'supplier_name' => [
+                'content' => $delivery['supplier_name'],
+                'align' => 'L'
+            ],
+            'created_by' => [
+                'content' => $delivery['created_by'],
+                'align' => 'L'
+            ]
+        ];
+    }
+
+    // Generate PDF
+    $pdf->SetFont('Arial', '', 20);
+    $pdf->AddPage();
+    $pdf->Cell(120);
+    $pdf->Cell(30, 10, $report_header[$type], 0, 0, 'C');
+    $pdf->SetFont('Arial', '', 10);
+    $pdf->Ln();
+    $pdf->Ln();
+    $pdf->FancyTable($header, $data);
+    $pdf->Output();
+}
+//Export deliveries Pdf
+if ($type === "purchase_order") {
+    $header = [
+        'id' => ['width' => 10],
+        'supplier_name' => ['width' => 30],
+        'product_name' =>['width' => 28],
+        'qty_ordered' => ['width' => 25],
+        'qty_received' => ['width' => 25],
+        'qty_remaining' => ['width' => 25],
+        'status' => ['width' => 20],
+        'created_by' => ['width' => 28],
+        'created_at' => ['width' => 47],
+        'updated_at' => ['width' => 47]
+    ];
+    $query = "SELECT o.id AS id, s.supplier_name, p.id as product_Id, p.product_name, o.quantity_ordered AS qty_ordered,
+            o.quantity_received AS qty_received, o.quantity_remaining AS qty_remaining, o.status, o.created_by, o.created_at, o.updated_at, o.batch 
+            FROM order_product AS o 
+            JOIN products AS p ON FIND_IN_SET(p.id, o.product)
+            JOIN supplier AS s ON s.id = o.supplier
+            ORDER BY o.batch DESC, o.created_at DESC";
+
+    $purchase_orders = mysqli_query($conn, $query);
+    $user_name = $_SESSION['username'];
+    $data = [];
+    $id=0;
+    foreach ($purchase_orders as $purchase_order) {
+        $purchase_order['created_by'] = $user_name;
+        $data[] = [
+             'id' => [
+                'content' => ++$id,
+                'align' => 'C'
+            ],
+             'supplier_name' => [
+                'content' => $purchase_order['supplier_name'],
+                'align' => 'L'
+            ],
+             'product_name' => [
+                'content' => $purchase_order['product_name'],
+                'align' => 'L'
+            ],
+             'qty_ordered' => [
+                'content' => $purchase_order['qty_ordered'],
+                'align' => 'C'
+            ],
+             'qty_received' => [
+                'content' => $purchase_order['qty_received'],
+                'align' => 'C'
+            ],
+            'qty_remaining' => [
+                'content' => $purchase_order['qty_remaining'],
+                'align' => 'C'
+            ],
+             'status' => [
+                'content' => $purchase_order['status'],
+                'align' => 'L'
+            ],
+            'created_by' => [
+                'content' => $purchase_order['created_by'],
+                'align' => 'L'
+            ],
+            'created_at' => [
+                'content' => date('M d, Y h:i:s A', strtotime($purchase_order['created_at'])),
+                'align' => 'C'
+            ],
+            'updated_at' => [
+                'content' => date('M d, Y h:i:s A', strtotime($purchase_order['updated_at'])),
+                'align' => 'C'
+            ]       
         ];
     }
 
