@@ -162,13 +162,13 @@ if ($type === "product") {
 }
 if ($type === "supplier") {
     $header = [
-        'id' => ['width' => 15],
-        'supplier_name',
-        'supplier_location',
-        'email',
-        'created_by',
-        'created_at',
-        'updated_at'
+        'id' => ['width' => 10],
+        'supplier_name' => ['width' => 40],
+        'supplier_location' => ['width' => 45],
+        'email' => ['width' => 50],
+        'created_by' => ['width' => 35],
+        'created_at' => ['width' => 50],
+        'updated_at' => ['width' => 50]
     ];
     $supplier_data = $_SESSION['supplier_data'];
     $user_name = $_SESSION['username'];
@@ -176,13 +176,35 @@ if ($type === "supplier") {
     foreach ($supplier_data as $supplier) {
         $supplier['created_by'] = $user_name;
         $data[] = [
-            $supplier['id'],
-            $supplier['supplier_name'],
-            $supplier['supplier_location'],
-            $supplier['email'],
-            $supplier['created_by'],
-            date('M d, Y h:i:s A', strtotime($supplier['created_at'])),
-            date('M d, Y h:i:s A', strtotime($supplier['updated_at'])),
+            'id' => [
+                'content' => $supplier['id'],
+                'align' => 'C'
+            ],
+            'supplier_name' => [
+                'content' => $supplier['supplier_name'],
+                'align' => 'C'
+            ],
+            'supplier_location' => [
+                'content' => $supplier['supplier_location']== "" ? "N/A" : $supplier['supplier_location'],
+
+                'align' => 'C'
+            ],
+            'email' => [
+                'content' => $supplier['email'],
+                'align' => 'C'
+            ],
+            'created_by' => [
+                'content' => $supplier['created_by'],
+                'align' => 'L'
+            ],
+            'created_at' => [
+                'content' => date('M d, Y h:i:s A', strtotime($supplier['created_at'])),
+                'align' => 'L'
+            ],
+            'updated_at' => [
+                'content' => date('M d, Y h:i:s A', strtotime($supplier['updated_at'])),
+                'align' => 'L'
+            ]
         ];
     }
 
