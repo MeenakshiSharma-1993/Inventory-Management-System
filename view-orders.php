@@ -22,10 +22,10 @@ $sql = "
   SELECT o.id AS order_id, s.supplier_name, o.product, p.id as product_Id, p.product_name, o.quantity_ordered,
          o.quantity_received, o.quantity_remaining, o.status, o.created_by, 
          o.created_at, o.updated_at, o.batch 
-  FROM order_product AS o 
-  JOIN products AS p ON FIND_IN_SET(p.id, o.product)
-  JOIN supplier AS s ON s.id = o.supplier
-  ORDER BY o.batch DESC, o.created_at DESC;
+        FROM order_product AS o 
+        JOIN products AS p ON FIND_IN_SET(p.id, o.product)
+        JOIN supplier AS s ON s.id = o.supplier
+        ORDER BY o.batch DESC, o.created_at DESC;
 ";
 $result = mysqli_query($conn, $sql);
 
@@ -55,6 +55,7 @@ while ($r = mysqli_fetch_assoc($result)) {
     }
     $batches[$b][$oid]['product_names'][] = $r['product_name'];
 }
+// History from order_product_history
 
 $historyData = [];
 
@@ -65,6 +66,7 @@ while ($historyRow = mysqli_fetch_assoc($resultHistory)) {
     $oid = $historyRow['order_product_id'];
     $historyData[$oid][] = $historyRow;
 }
+
 ?>
 
 <!DOCTYPE html>

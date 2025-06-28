@@ -48,7 +48,7 @@ if ($type === "supplier") {
     }
 }
 if ($type === "purchase_order") {
-    $query="SELECT o.id AS order_id, s.supplier_name, p.id as product_Id, p.product_name, o.quantity_ordered,
+    $query = "SELECT o.id AS order_id, s.supplier_name, p.id as product_Id, p.product_name, o.quantity_ordered,
             o.quantity_received, o.quantity_remaining, o.status, o.created_by, o.created_at, o.updated_at, o.batch 
             FROM order_product AS o 
             JOIN products AS p ON FIND_IN_SET(p.id, o.product)
@@ -69,7 +69,10 @@ if ($type === "purchase_order") {
 }
 
 if ($type === "deliveries") {
-    $query="";
+    $query = "select date_received,qty_received,products.product_name,supplier_name from order_product_history,order_product,users,supplier,products where order_product_history.order_product_id=order_product.id
+                and order_product.supplier=supplier.id
+                and order_product.product=products.id
+                order by order_product.batch desc;";
     $purchase_orders = mysqli_query($conn, $query);
     $is_header = true;
     foreach ($purchase_orders as $purchase_order) {

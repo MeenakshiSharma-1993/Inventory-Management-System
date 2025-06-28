@@ -17,7 +17,7 @@ if (!isset($user)) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Add User</title>
+    <title>Report</title>
     <link rel="stylesheet" href="public/css/style.css">
     <script src="https://kit.fontawesome.com/dfec668964.js" crossorigin="anonymous"></script>
 </head>
