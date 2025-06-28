@@ -70,18 +70,18 @@ if ($type === "purchase_order") {
 
 if ($type === "deliveries") {
     $query="";
-    // $purchase_orders = mysqli_query($conn, $query);
-    // $is_header = true;
-    // foreach ($purchase_orders as $purchase_order) {
-    //     $purchase_order['created_by'] = $user_name;
-    //     if ($is_header) {
-    //         echo implode("\t", array_keys($purchase_order)) . "\n";
-    //         $is_header = false;
-    //     }
-    //     // Escape each value properly for Excel/TSV/CSV
-    //     escape_value_for_excel($purchase_order);
-    //     echo implode("\t", $purchase_order) . "\n";
-    // }
+    $purchase_orders = mysqli_query($conn, $query);
+    $is_header = true;
+    foreach ($purchase_orders as $purchase_order) {
+        $purchase_order['created_by'] = $user_name;
+        if ($is_header) {
+            echo implode("\t", array_keys($purchase_order)) . "\n";
+            $is_header = false;
+        }
+        // Escape each value properly for Excel/TSV/CSV
+        escape_value_for_excel($purchase_order);
+        echo implode("\t", $purchase_order) . "\n";
+    }
 }
 
 function escape_value_for_excel($data)
