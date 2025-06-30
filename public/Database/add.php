@@ -9,13 +9,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $first_name = $_POST["first_name"];
         $last_name = $_POST["last_name"];
         $email = $_POST["email"];
+        $permissions = $_POST["permission_value"];
         $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
         $created_at = date("Y-m-d H:i:s");
         $updated_at = date("Y-m-d H:i:s");
         try {
-            $query = "INSERT INTO users(first_name, last_name, email, password, created_at, updated_at) VALUES(?,?,?,?,?,?)";
+            $query = "INSERT INTO users(first_name, last_name, email, password,permissions, created_at, updated_at) VALUES(?,?,?,?,?,?,?)";
             // var_dump($query);
-            $params = array($first_name, $last_name, $email, $password, $created_at, $updated_at);
+            $params = array($first_name, $last_name, $email, $password, $permissions, $created_at, $updated_at);
             $sentPageAdd = "Location: ../../user-add.php";
             $pageName = "User";
             AddData($query, $params, $sentPageAdd, $pageName);
@@ -84,18 +85,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $productId = $item['product_id'];
             $supplierId = $item['supplier_id'];
             $quantity_ordered = intval($item['quantity']);
-            $batch=time();
-            $status="Pending";
+            $batch = time();
+            $status = "Pending";
             $created_at = date("Y-m-d H:i:s");
             $updated_at = date("Y-m-d H:i:s");
             $created_by = $_SESSION['user_Id'];
             try {
                 $query = "INSERT INTO order_product(supplier, product, quantity_ordered, batch, status, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?)";
-                $params = array($supplierId,$productId,$quantity_ordered,$batch,$status,$created_by,$created_at,$updated_at);
+                $params = array($supplierId, $productId, $quantity_ordered, $batch, $status, $created_by, $created_at, $updated_at);
                 $sentPageAdd = "Location: ../../product-order.php";
                 $pageName = "Order-Product";
                 AddData($query, $params, $sentPageAdd, $pageName);
-                
             } catch (Exception $e) {
                 echo "ERROR:- " . $e->getMessage();
                 $_SESSION['error'] = "Failed to placed order. Please try again.";

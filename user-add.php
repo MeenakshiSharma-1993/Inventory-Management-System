@@ -10,7 +10,7 @@ if (!isset($user)) {
 } else {
     echo "<script>console.log('User logged in dashboard page: " . $user . "');</script>";
 }
- 
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +47,12 @@ if (!isset($user)) {
 
                             <label for="password">PASSWORD</label>
                             <input type="password" id="password" name="password" required>
-
+                            <label for="email">Permissions</label>
+                            <input type="hidden" name="permission_value" id="permission_value">
+                            <!-- permission code -->
+                            <?php
+                              include 'permission.php';
+                            ?>
                             <button type="submit" class="formBtn">+ Add User</button>
                         </form>
 

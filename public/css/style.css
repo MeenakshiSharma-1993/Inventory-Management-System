@@ -685,6 +685,27 @@ button:hover {
   transition: 4.0s all ease-in-out;
 }
 
+.module {
+  text-align: left;
+  font-weight: bold;
+}
+
+.permission {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #e0e0e0;
+  /* border-radius: 4px; */
+  color: #000;
+  user-select: none;
+  width:52px;
+  cursor: pointer;
+}
+
+.permissionActive {
+  background-color: #ff69b4;
+  color: white;
+  transition: 0.3s all;
+}
 
 /*user-list CSS end*/
 
@@ -1080,14 +1101,15 @@ input[type="number"] {
   margin-left: 10px;
   text-decoration: none;
   text-align: center;
- width: 100px;
+  width: 100px;
 }
 
-.reportBtn:hover{
+.reportBtn:hover {
   background-color: #fcb5c7;
 
 }
-.export-btn{
-      display: flex;
-    justify-content: flex-end;
+
+.export-btn {
+  display: flex;
+  justify-content: flex-end;
 }
