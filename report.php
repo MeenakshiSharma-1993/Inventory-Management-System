@@ -30,11 +30,11 @@ if (!isset($user)) {
         <div class="main  report-main">
             <?php include 'partial/app-topnav.php'; ?>
             <?php
+            $errMsg="";
             include('public/Database/showData.php');
             $permissions = $_SESSION['permissions'];
             $permission_values = explode(',', $permissions[0]['permissions']);
-            foreach ($permission_values as $permission_value) {
-                if ($permission_value == "report-view") { ?>
+            if (in_array("reports-view", $permission_values)) { ?>
                     <div class="content-container report-container">
                         <div class="sub-report-container">
                             <h3>Export Products </h3>
@@ -70,8 +70,7 @@ if (!isset($user)) {
             <?php } else {
                     $errMsg = "You Do not have permission to View Reports.";
                 }
-            }
-            echo "<div id='errMsg'>$errMsg</div>";
+            if($errMsg !=""){ echo "<div id='errMsg'>$errMsg</div>";}
             ?>
         </div>
 

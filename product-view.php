@@ -1,6 +1,7 @@
 <?php
 session_start();
 include './public/Database/connection.php';
+include './public/Database/showData.php';
 
 
 // Access control
@@ -94,7 +95,7 @@ $allSuppliers = $conn->query("SELECT * FROM supplier")->fetch_all(MYSQLI_ASSOC);
                             </thead>
                             <tbody>
                                 <?php
-                                include './public/Database/showData.php';
+                                
                                 $product_data = $_SESSION['product_data'];
                                 if (!empty($product_data)):
                                     $count = 0;
