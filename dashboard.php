@@ -95,32 +95,44 @@ if (!$result2) {
         <?php include 'partial/app-sidebar.php'; ?>
         <div class="main">
             <?php include 'partial/app-topnav.php'; ?>
-            <div class="content-container dashboard-container">
-                <!-- Pie Chart -->
-                <div class="sub-dashboard-container">
-                    <div id="container1" style="height: 220px;"></div>
-                    <p class="highcharts-description">
-                        This pie chart shows the distribution of purchase orders by status.
-                    </p>
-                </div>
-                <!-- Bar Chart -->
-                <div class="sub-dashboard-container">
-                    <div id="container2" style="height:220px;"></div>
-                    <p class="highcharts-description">
-                        This bar chart shows the number of products assigned to each supplier.
-                    </p>
-                </div>
-            </div>
-            <div class="dashboard-container-last" style="height: 200px; width:100%">
-                <figure class="highcharts-figure">
-                    <div id="container3" style="height:230px;"></div>
-                    <!-- <p class="highcharts-description">
+            <?php
+            include('public/Database/showData.php');
+            $permissions = $_SESSION['permissions'];
+            $permission_values = explode(',', $permissions[0]['permissions']);
+            foreach ($permission_values as $permission_value) {
+                if ($permission_value == "dashboard-view") { ?>
+                    <div class="content-container dashboard-container">
+                        <!-- Pie Chart -->
+                        <div class="sub-dashboard-container">
+                            <div id="container1" style="height: 220px;"></div>
+                            <p class="highcharts-description">
+                                This pie chart shows the distribution of purchase orders by status.
+                            </p>
+                        </div>
+                        <!-- Bar Chart -->
+                        <div class="sub-dashboard-container">
+                            <div id="container2" style="height:220px;"></div>
+                            <p class="highcharts-description">
+                                This bar chart shows the number of products assigned to each supplier.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="dashboard-container-last" style="height: 200px; width:100%">
+                        <figure class="highcharts-figure">
+                            <div id="container3" style="height:230px;"></div>
+                            <!-- <p class="highcharts-description">
                         Basic line chart showing trends in a dataset. This chart includes the
                         <code>series-label</code> module, which adds a label to each line for
                         enhanced readability.
                     </p> -->
-                </figure>
-            </div>
+                        </figure>
+                    </div>
+            <?php } else {
+                    $errMsg = "You Do not have permission to view Dashboard.";
+                }
+            }
+            echo "<div id='errMsg'>$errMsg</div>";
+            ?>
         </div>
     </div>
 
@@ -224,7 +236,7 @@ if (!$result2) {
                 align: 'right',
                 verticalAlign: 'middle'
             },
-            
+
             series: [{
                 name: 'Received Quantity',
                 data: <?= json_encode(array_values($line_data)) ?>

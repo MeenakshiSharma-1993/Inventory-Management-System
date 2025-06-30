@@ -29,39 +29,50 @@ if (!isset($user)) {
         <!-- Main Content -->
         <div class="main  report-main">
             <?php include 'partial/app-topnav.php'; ?>
-
-            <div class="content-container report-container">
-                <div class="sub-report-container">
-                    <h3>Export Products </h3>
-                    <div class="export-btn">
-                        <a href="public/Database/report_csv.php?report=product" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=product" target="_blank" class="formBtn reportBtn">PDF</a>
+            <?php
+            include('public/Database/showData.php');
+            $permissions = $_SESSION['permissions'];
+            $permission_values = explode(',', $permissions[0]['permissions']);
+            foreach ($permission_values as $permission_value) {
+                if ($permission_value == "report-view") { ?>
+                    <div class="content-container report-container">
+                        <div class="sub-report-container">
+                            <h3>Export Products </h3>
+                            <div class="export-btn">
+                                <a href="public/Database/report_csv.php?report=product" class="formBtn reportBtn">Excel</a>
+                                <a href="public/Database/report_pdf.php?report=product" target="_blank" class="formBtn reportBtn">PDF</a>
+                            </div>
+                        </div>
+                        <div class="sub-report-container">
+                            <h3>Export Suppliers </h3>
+                            <div class="export-btn">
+                                <a href="public/Database/report_csv.php?report=supplier" class="formBtn reportBtn">Excel</a>
+                                <a href="public/Database/report_pdf.php?report=supplier" target="_blank" class="formBtn reportBtn">PDF</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="sub-report-container">
-                    <h3>Export Suppliers </h3>
-                    <div class="export-btn">
-                        <a href="public/Database/report_csv.php?report=supplier" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=supplier"  target="_blank" class="formBtn reportBtn">PDF</a>
+                    <div class="content-container report-container">
+                        <div class="sub-report-container">
+                            <h3>Export Deliveries </h3>
+                            <div class="export-btn">
+                                <a href="public/Database/report_csv.php?report=deliveries" class="formBtn reportBtn">Excel</a>
+                                <a href="public/Database/report_pdf.php?report=deliveries" target="_blank" class="formBtn reportBtn">PDF</a>
+                            </div>
+                        </div>
+                        <div class="sub-report-container">
+                            <h3>Export Purchase Order </h3>
+                            <div class="export-btn">
+                                <a href="public/Database/report_csv.php?report=purchase_order" class="formBtn reportBtn">Excel</a>
+                                <a href="public/Database/report_pdf.php?report=purchase_order" target="_blank" class="formBtn reportBtn">PDF</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="content-container report-container">
-                <div class="sub-report-container">
-                    <h3>Export Deliveries </h3>
-                    <div class="export-btn">
-                        <a href="public/Database/report_csv.php?report=deliveries" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=deliveries" target="_blank" class="formBtn reportBtn">PDF</a>
-                    </div>
-                </div>
-                <div class="sub-report-container">
-                    <h3>Export Purchase Order </h3>
-                    <div class="export-btn">
-                        <a href="public/Database/report_csv.php?report=purchase_order" class="formBtn reportBtn">Excel</a>
-                        <a href="public/Database/report_pdf.php?report=purchase_order" target="_blank" class="formBtn reportBtn">PDF</a>
-                    </div>
-                </div>
-            </div>
+            <?php } else {
+                    $errMsg = "You Do not have permission to View Reports.";
+                }
+            }
+            echo "<div id='errMsg'>$errMsg</div>";
+            ?>
         </div>
 
     </div>

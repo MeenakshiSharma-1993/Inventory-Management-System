@@ -30,7 +30,13 @@ if (!isset($user)) {
         <div class="main">
             <?php include 'partial/app-topnav.php'; ?>
             <div class="content-container">
+                <?php       
+                $errMsg="";         
+                $permissions = $_SESSION['permissions'];
+                $permission_values = explode(',', $permissions[0]['permissions']);
+                if (in_array("supplier-create", $permission_values)) { ?>
                 <!-- Create User Section -->
+
                 <div class="add-user">
                     <h3><i class="fas fa-user-plus"></i>Create Supplier</h3>
                     <div class="form-box">
@@ -56,6 +62,12 @@ if (!isset($user)) {
                     echo "<div id='errMsg'>$error</div>";
                     unset($_SESSION['error']);
                 }
+                ?>
+                <?php } else  {
+                        $errMsg = "You Do not have permission to Add Supplier.";
+                    }
+                
+                if($errMsg!=""){echo "<div id='errMsg'>$errMsg</div>";};
                 ?>
             </div>
         </div>

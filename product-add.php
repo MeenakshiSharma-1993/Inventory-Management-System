@@ -33,7 +33,11 @@ if (!isset($user)) {
         <div class="main p-4">
             <?php include 'partial/app-topnav.php'; ?>
             <div class="content-container">
-
+<?php       
+                $errMsg="";         
+                $permissions = $_SESSION['permissions'];
+                $permission_values = explode(',', $permissions[0]['permissions']);
+                if (in_array("product-create", $permission_values)) { ?>
                 <!-- Create Product Section -->
                 <div class="add-user mb-4">
                     <h3 class="add-user mb-4 fs-4 fw-semibold">
@@ -81,6 +85,12 @@ if (!isset($user)) {
                     <div id='errMsg' class='alert alert-warning mt-4'><?= $error; ?></div>
                 <?php unset($_SESSION['error']);
                 }
+                ?>
+                 <?php } else  {
+                        $errMsg = "You Do not have permission to Add Product.";
+                    }
+                
+                if($errMsg!=""){echo "<div id='errMsg'>$errMsg</div>";};
                 ?>
             </div>
         </div>

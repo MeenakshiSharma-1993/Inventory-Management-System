@@ -4,6 +4,7 @@ include './public/Database/connection.php';
 
 // Access control
 $user = $_SESSION['username'];
+$user_id = $_SESSION['user_Id'];
 if (!isset($user)) {
     header("location: login.php");
     exit();
@@ -24,8 +25,8 @@ $sql = "
          o.created_at, o.updated_at, o.batch 
         FROM order_product AS o 
         JOIN products AS p ON FIND_IN_SET(p.id, o.product)
-        JOIN supplier AS s ON s.id = o.supplier
-        ORDER BY o.batch DESC, o.created_at DESC;
+        JOIN supplier AS s ON s.id = o.supplier where o.created_by = $user_id 
+        ORDER BY o.batch DESC, o.created_at DESC ;
 ";
 $result = mysqli_query($conn, $sql);
 
@@ -85,126 +86,143 @@ while ($historyRow = mysqli_fetch_assoc($resultHistory)) {
         <div class="main">
             <?php include 'partial/app-topnav.php'; ?>
             <div class="content-container">
-
-                <!-- Edit Order Modal -->
-                <div id="modal" style="display:none;">
-                    <div class="add-user" style="background:#fff; padding:20px; border:1px solid #000">
-                        <h3>Edit Order</h3>
-                        <form method="POST" class="form-box">
-                            <input type="hidden" name="order_id" id="editId">
-                            <table class="modal-edit-table">
-                                <thead>
-                                    <tr>
-                                        <th>Supplier</th>
-                                        <th>Product Name</th>
-                                        <th>Qty Ordered</th>
-                                        <th>Qty Delivered</th>
-                                        <th>Qty Received</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="modal-table-body">
-                                    <!--Genrate Row through JS -->
-                                </tbody>
-                            </table>
-                            <div style="margin-top:15px;">
-                                <input class="formBtn" name="update_order" type="submit" value="Update All">
-                                <input class="formBtn" id="cancelBtn" type="button" value="Cancel">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- View Product delivery history -->
-                <div id="modal2" style="display:none;">
-                    <div class="add-user" style="background:#fff; padding:20px; border:1px solid #000">
-                        <h3>Delivery History</h3>
-                        <form method="POST" class="form-box">
-                            <table class="modal-edit-table">
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Date Received</th>
-                                        <th>Qty Received</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="modal2-table-body">
-                                    <!--Genrate Row through JS -->
-                                </tbody>
-                            </table>
-                            <div style="margin-top:15px;">
-                                <input class="formBtn" id="cancelBtnHistory" type="button" value="Cancel">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- List of Orders -->
-                <div class="list-order">
-                    <div class="add-user">
-                        <h3><i class="fas fa-list"></i> List of Purchase Orders</h3>
-                    </div>
-                    <?php if (!empty($batches)): ?>
-                        <?php foreach ($batches as $batchKey => $orders): ?>
-                            <h4 id="view-orders-h4" style="margin-top:20px;">Batch#: <?= htmlspecialchars($batchKey) ?></h4>
-                            <table id="order-view" cellspacing="0" cellpadding="0">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Supplier</th>
-                                        <th>Product(s)</th>
-                                        <th>Qty Ordered</th>
-                                        <th>Qty Received</th>
-                                        <th>Qty Remaining</th>
-                                        <th>Status</th>
-                                        <th>Created At</th>
-                                        <th>Updated At</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($orders as $o): ?>
+                <?php
+                $errMsg = "";
+                $permissions = $_SESSION['permissions'];
+                $permission_values = explode(',', $permissions[0]['permissions']);
+                if (in_array("purchase-view", $permission_values)) { ?>
+                    <!-- Edit Order Modal -->
+                    <div id="modal" style="display:none;">
+                        <div class="add-user" style="background:#fff; padding:20px; border:1px solid #000">
+                            <h3>Edit Order</h3>
+                            <form method="POST" class="form-box">
+                                <input type="hidden" name="order_id" id="editId">
+                                <table class="modal-edit-table">
+                                    <thead>
                                         <tr>
-                                            <td><?= $o['order_id'] ?></td>
-                                            <td><?= htmlspecialchars($o['supplierName']) ?></td>
-                                            <td><?= htmlspecialchars(implode(', ', $o['product_names'])) ?></td>
-                                            <td><?= $o['quantity_ordered'] ?></td>
-                                            <td><?= $o['quantity_received'] ?></td>
-                                            <td><?= $o['quantity_remaining'] ?></td>
-                                            <td><span class="order-status-<?= htmlspecialchars($o['status']) ?>"><?= htmlspecialchars($o['status']) ?></span></td>
-                                            <td><?= date('m, d, y @ h:i:s A', strtotime($o['created_at'])) ?></td>
-                                            <td><?= date('m, d, y @ h:i:s A', strtotime($o['updated_at'])) ?></td>
-                                            <td>
-                                                <!-- <a href="?delete_order=<?= $o['order_id'] ?>" class="delete-btn"
+                                            <th>Supplier</th>
+                                            <th>Product Name</th>
+                                            <th>Qty Ordered</th>
+                                            <th>Qty Delivered</th>
+                                            <th>Qty Received</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modal-table-body">
+                                        <!--Genrate Row through JS -->
+                                    </tbody>
+                                </table>
+                                <div style="margin-top:15px;">
+                                    <input class="formBtn" name="update_order" type="submit" value="Update All">
+                                    <input class="formBtn" id="cancelBtn" type="button" value="Cancel">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- View Product delivery history -->
+                    <div id="modal2" style="display:none;">
+                        <div class="add-user" style="background:#fff; padding:20px; border:1px solid #000">
+                            <h3>Delivery History</h3>
+                            <form method="POST" class="form-box">
+                                <table class="modal-edit-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Date Received</th>
+                                            <th>Qty Received</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modal2-table-body">
+                                        <!--Genrate Row through JS -->
+                                    </tbody>
+                                </table>
+                                <div style="margin-top:15px;">
+                                    <input class="formBtn" id="cancelBtnHistory" type="button" value="Cancel">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- List of Orders -->
+                    <div class="list-order">
+                        <div class="add-user">
+                            <h3><i class="fas fa-list"></i> List of Purchase Orders</h3>
+                        </div>
+                        <?php if (!empty($batches)): ?>
+                            <?php foreach ($batches as $batchKey => $orders): ?>
+                                <h4 id="view-orders-h4" style="margin-top:20px;">Batch#: <?= htmlspecialchars($batchKey) ?></h4>
+                                <table id="order-view" cellspacing="0" cellpadding="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Supplier</th>
+                                            <th>Product(s)</th>
+                                            <th>Qty Ordered</th>
+                                            <th>Qty Received</th>
+                                            <th>Qty Remaining</th>
+                                            <th>Status</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($orders as $o): ?>
+                                            <tr>
+                                                <td><?= $o['order_id'] ?></td>
+                                                <td><?= htmlspecialchars($o['supplierName']) ?></td>
+                                                <td><?= htmlspecialchars(implode(', ', $o['product_names'])) ?></td>
+                                                <td><?= $o['quantity_ordered'] ?></td>
+                                                <td><?= $o['quantity_received'] ?></td>
+                                                <td><?= $o['quantity_remaining'] ?></td>
+                                                <td><span class="order-status-<?= htmlspecialchars($o['status']) ?>"><?= htmlspecialchars($o['status']) ?></span></td>
+                                                <td><?= date('m, d, y @ h:i:s A', strtotime($o['created_at'])) ?></td>
+                                                <td><?= date('m, d, y @ h:i:s A', strtotime($o['updated_at'])) ?></td>
+                                                <td>
+                                                    <!-- <a href="?delete_order=<?= $o['order_id'] ?>" class="delete-btn"
                                                     onclick="return confirm('Delete Order ID <?= $o['order_id'] ?>?');">
                                                     <i class="fa fa-trash"></i>Delete
                                                 </a> -->
-                                                <a href="#" data-id="<?= $o['order_id'] ?>" class="history-btn"><i class="fa-solid fa-clock-rotate-left"></i> Delivery History</a>
+                                                    <a href="#" data-id="<?= $o['order_id'] ?>" class="history-btn"><i class="fa-solid fa-clock-rotate-left"></i> Delivery History</a>
 
 
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                            <button type="submit" data-id="<?= $o['order_id'] ?>"
-                                data-batch="<?= $o['batch'] ?>"
-                                data-supplier="<?= htmlspecialchars($o['supplierName'], ENT_QUOTES) ?>"
-                                data-product="<?= htmlspecialchars($o['product_name'], ENT_QUOTES) ?>"
-                                data-quantity="<?= $o['quantity_ordered'] ?>"
-                                data-status="<?= htmlspecialchars($o['status'], ENT_QUOTES) ?>" class="edit-btn formBtn orderBtn ">Update</button>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No orders found.</p>
-                    <?php endif; ?>
-                </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php
+                                if (in_array("purchase-edit", $permission_values)) {
+                                ?>
+                                    <button type="submit" data-id="<?= $o['order_id'] ?>"
+                                        data-batch="<?= $o['batch'] ?>"
+                                        data-supplier="<?= htmlspecialchars($o['supplierName'], ENT_QUOTES) ?>"
+                                        data-product="<?= htmlspecialchars($o['product_name'], ENT_QUOTES) ?>"
+                                        data-quantity="<?= $o['quantity_ordered'] ?>"
+                                        data-status="<?= htmlspecialchars($o['status'], ENT_QUOTES) ?>" class="edit-btn formBtn orderBtn ">Update</button>
+                                <?php } ?>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>No orders found.</p>
+                        <?php endif; ?>
+                    </div>
 
-                <?php
-                if (isset($_SESSION['error'])) {
-                    $error = $_SESSION['error'];
-                    echo "<div id='errMsg'>$error</div>";
-                    unset($_SESSION['error']);
+                    <?php
+                    if (isset($_SESSION['error'])) {
+                        $error = $_SESSION['error'];
+                        echo "<div id='errMsg'>$error</div>";
+                        unset($_SESSION['error']);
+                    }
+                    ?>
+                <?php } else {
+                    $errMsg = "You Do not have permission to view Purchase orders.";
+                }
+
+                if ($errMsg != "") {
+                    echo "<div id='errMsg'>$errMsg</div>";
                 }
                 ?>
+
             </div>
         </div>
     </div>

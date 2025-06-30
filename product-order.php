@@ -52,46 +52,59 @@ while ($row = $result->fetch_assoc()) {
         <?php include 'partial/app-sidebar.php'; ?>
         <div class="main">
             <?php include 'partial/app-topnav.php'; ?>
+
             <div class="content-container">
+                <?php
+                $errMsg = "";
+                $permissions = $_SESSION['permissions'];
+                $permission_values = explode(',', $permissions[0]['permissions']);
+                if (in_array("purchase-create", $permission_values)) { ?>
+                    <div class="add-user">
+                        <h3><i class="fas fa-user-plus"></i> Order Product</h3>
 
-                <div class="add-user">
-                    <h3><i class="fas fa-user-plus"></i> Order Product</h3>
+                        <form method="POST" action="public/Database/add.php" id="orderForm">
 
-                    <form method="POST" action="public/Database/add.php" id="orderForm">
+                            <div class="form-box" style="padding-bottom:5%"><button type="button" class="formBtn" id="addProductBtn">Add Another Product</button>
+                                <input type="hidden" name="form_name" value="Product-order">
+                                <br><br>
+                                <ul id="productList">
+                                    <li class="product-row">
+                                        <div class="">
+                                            <label for="product_id" style="display:inline">PRODUCT NAME: </label>
+                                            <select name="product_id[]" class="product-select" id="productBind" required>
+                                                <option value="">Select Product</option>
+                                                <?php foreach ($products as $product):
+                                                ?>
+                                                    <option value="<?= $product['id'] ?>"><?= htmlspecialchars($product['product_name']) ?></option>
+                                                <?php endforeach;
+                                                ?>
+                                            </select>
+                                            <button class="formBtn btnRemoveProduct">Remove</button>
+                                        </div>
+                                        <div class="supplier-container">
+                                            <!--supplier will bind here -->
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <input type="submit" class="formBtn submitBtn" style="margin-right:10px" value="Submit Order">
+                        </form>
+                        <?php
+                        if (isset($_SESSION['error'])) {
+                            $error = $_SESSION['error'];
+                            echo "<div id='errMsg'>$error</div>";
+                            unset($_SESSION['error']);
+                        }
+                        ?>
+                    </div>
+                <?php } else {
+                    $errMsg = "You Do not have permission to Purchase an order.";
+                }
 
-                        <div class="form-box" style="padding-bottom:5%"><button type="button" class="formBtn" id="addProductBtn">Add Another Product</button>
-                            <input type="hidden" name="form_name" value="Product-order">
-                            <br><br>
-                            <ul id="productList">
-                                <li class="product-row">
-                                    <div class="">
-                                        <label for="product_id" style="display:inline">PRODUCT NAME: </label>
-                                        <select name="product_id[]" class="product-select" id="productBind" required>
-                                            <option value="">Select Product</option>
-                                            <?php foreach ($products as $product):
-                                            ?>
-                                                <option value="<?= $product['id'] ?>"><?= htmlspecialchars($product['product_name']) ?></option>
-                                            <?php endforeach;
-                                            ?>
-                                        </select>
-                                        <button class="formBtn btnRemoveProduct">Remove</button>
-                                    </div>
-                                    <div class="supplier-container">
-                                        <!--supplier will bind here -->
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <input type="submit" class="formBtn submitBtn" style="margin-right:10px" value="Submit Order">
-                    </form>
-                    <?php
-                    if (isset($_SESSION['error'])) {
-                        $error = $_SESSION['error'];
-                        echo "<div id='errMsg'>$error</div>";
-                        unset($_SESSION['error']);
-                    }
-                    ?>
-                </div>
+                if ($errMsg != "") {
+                    echo "<div id='errMsg'>$errMsg</div>";
+                };
+                ?>
             </div>
         </div>
     </div>
