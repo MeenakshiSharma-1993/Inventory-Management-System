@@ -97,6 +97,7 @@ if (!$result2) {
             <?php include 'partial/app-topnav.php'; ?>
             <?php
             include('public/Database/showData.php');
+            $errMsg = "";
             $permissions = $_SESSION['permissions'];
             $permission_values = explode(',', $permissions[0]['permissions']);
             if (in_array("dasboard-view", $permission_values)) { ?>
@@ -130,8 +131,9 @@ if (!$result2) {
             <?php } else {
                 $errMsg = "You Do not have permission to view Dashboard.";
             }
-
-            echo "<div id='errMsg'>$errMsg</div>";
+            if ($errMsg != "") {
+                echo "<div id='errMsg'>$errMsg</div>";
+            }
             ?>
         </div>
     </div>

@@ -10,7 +10,7 @@ if (!isset($user)) {
 } else {
     echo "<script>console.log('User logged in dashboard page: " . $user . "');</script>";
 }
- 
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,48 +30,53 @@ if (!isset($user)) {
         <div class="main">
             <?php include 'partial/app-topnav.php'; ?>
             <div class="content-container">
-                <?php       
-                $errMsg="";         
+                <?php
+                $errMsg = "";
                 $permissions = $_SESSION['permissions'];
                 $permission_values = explode(',', $permissions[0]['permissions']);
                 if (in_array("supplier-create", $permission_values)) { ?>
-                <!-- Create User Section -->
+                    <!-- Create User Section -->
 
-                <div class="add-user">
-                    <h3><i class="fas fa-user-plus"></i>Create Supplier</h3>
-                    <div class="form-box">
-                        <form action="public/Database/add.php" method="POST">
-                            <input type="hidden" name="form_name" value="Supplier-add">
-                            <label for="supp_name">Supplier Name</label>
-                            <input type="text" id="supp_name" name="supp_name" required>
+                    <div class="add-user">
+                        <h3><i class="fas fa-user-plus"></i>Create Supplier</h3>
+                        <div class="form-box">
+                            <form action="public/Database/add.php" method="POST">
+                                <input type="hidden" name="form_name" value="Supplier-add">
+                                <label for="supp_name">Supplier Name</label>
+                                <input type="text" id="supp_name" name="supp_name" required>
 
-                            <label for="supp_Location">Supplier Location</label>
-                            <input type="text" id="supp_Location" name="supp_Location" required>
+                                <label for="supp_Location">Supplier Location</label>
+                                <input type="text" id="supp_Location" name="supp_Location" required>
 
-                            <label for="supp_email">EMAIL</label>
-                            <input type="email" id="supp_email" name="supp_email" required>
+                                <label for="supp_email">EMAIL</label>
+                                <input type="email" id="supp_email" name="supp_email" required>
 
-                            <button type="submit" class="formBtn">+ Add Supplier</button>
-                        </form>
+                                <button type="submit" class="formBtn">+ Add Supplier</button>
+                            </form>
 
+                        </div>
                     </div>
-                </div>
-                <?php
-                if (isset($_SESSION['error'])) {
-                    $error = $_SESSION['error'];
-                    echo "<div id='errMsg'>$error</div>";
-                    unset($_SESSION['error']);
-                }
-                ?>
-                <?php } else  {
-                        $errMsg = "You Do not have permission to Add Supplier.";
+                    <?php
+                    if (isset($_SESSION['error'])) {
+                        $error = $_SESSION['error'];
+                        if ($error != "") {
+                            echo "<div id='errMsg'>$error</div>";
+                            unset($_SESSION['error']);
+                        }
                     }
-                
-                if($errMsg!=""){echo "<div id='errMsg'>$errMsg</div>";};
+                    ?>
+                <?php } else {
+                    $errMsg = "You Do not have permission to Add Supplier.";
+                }
+
+                if ($errMsg != "") {
+                    echo "<div id='errMsg'>$errMsg</div>";
+                };
                 ?>
             </div>
         </div>
     </div>
 </body>
 <script src="public/js/script.js"></script>
+
 </html>

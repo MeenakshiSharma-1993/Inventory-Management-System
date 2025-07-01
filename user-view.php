@@ -35,10 +35,10 @@ include './public/Database/update.php';
         <?php include 'partial/app-sidebar.php'; ?>
 
         <!-- Main Content -->
-         <div class="main">
+        <div class="main">
             <?php include 'partial/app-topnav.php'; ?>
             <?php
-            $errMsg="";
+            $errMsg = "";
             $permissions = $_SESSION['permissions'];
             $permission_values = explode(',', $permissions[0]['permissions']);
             if (in_array("user-view", $permission_values)) { ?>
@@ -110,7 +110,7 @@ include './public/Database/update.php';
                                                 data-email=" . $user1['email'] . "><i class='fa fa-pencil'></i>Edit</a>";
                                         }
                                         if (in_array("user-delete", $permission_values)) {
-                                           echo "<a href='?delete_user=$userid' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete " . $user1["first_name"] . ' ' . $user1['last_name']  . "?');\"><i class='fa fa-trash'></i>Delete</a>
+                                            echo "<a href='?delete_user=$userid' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete " . $user1["first_name"] . ' ' . $user1['last_name']  . "?');\"><i class='fa fa-trash'></i>Delete</a>
                                             </td>
                                         </tr>";
                                         }
@@ -132,8 +132,10 @@ include './public/Database/update.php';
                 <?php
                 if (isset($_SESSION['error'])) {
                     $error = $_SESSION['error'];
-                    echo "<div id='errMsg'>$error</div>";
-                    unset($_SESSION['error']);
+                    if ($error != "") {
+                        echo "<div id='errMsg'>$error</div>";
+                        unset($_SESSION['error']);
+                    }
                 }
                 ?>
             <?php } else {

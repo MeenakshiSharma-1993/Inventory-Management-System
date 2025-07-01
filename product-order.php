@@ -87,8 +87,14 @@ while ($row = $result->fetch_assoc()) {
                                     </li>
                                 </ul>
                             </div>
-                            <input type="submit" class="formBtn submitBtn" style="margin-right:10px" value="Submit Order">
+                            <div style="margin-top: 15px;">
+                                <strong style="margin-top:10px">Total Amount: ₹ <span id="totalAmount">0.00</span></strong>
+                                <a href="#" class="formBtn submitBtn payBtn" style="margin-top:0" id="payNowLink" target="_blank">Pay Now</a>
+                                <input type="submit" class="formBtn submitBtn" style="margin-right:10px;margin-top:0" value="Submit Order">
+                            </div>
                         </form>
+
+
                         <?php
                         if (isset($_SESSION['error'])) {
                             $error = $_SESSION['error'];
@@ -112,7 +118,7 @@ while ($row = $result->fetch_assoc()) {
     <script>
         const productSupplierMap = <?php echo json_encode($productSupplierMap); ?>;
 
-        let globalIndex = 0; // define at top if needed
+        let globalIndex = 0;
 
         function bindProductSelect($context) {
             $context.find('.product-select').off('change').on('change', function() {
@@ -123,61 +129,96 @@ while ($row = $result->fetch_assoc()) {
                 const $container = $row.find('.supplier-container');
 
                 $container.empty();
-                console.log(suppliers);
+
                 if (suppliers.length > 0) {
                     suppliers.forEach(supplier => {
                         const html = `
-                        <div class="sub-product-row row-bottom">
-                            <div>
-                                <div class="supplier-display">${supplier.name}</div>
-                            </div>
-                            <div style="width: 40%;" class="supplier-inputs">
-                                <label>QUANTITY:</label>
-                                <input type="number" name="items[${globalIndex}][quantity]" required placeholder="Enter quantity">
+                    <div class="sub-product-row row-bottom">
+                        <div>
+                            <div class="supplier-display">${supplier.name}</div>
+                        </div>
+                        <div style="width: 50%;" class="supplier-inputs">
+                            <div style="display:flex; gap: 5px;">
+                                <input type="number" class="qty-input" name="items[${globalIndex}][quantity]" required placeholder="Enter quantity">
+                                <input type="number" class="price-input" name="items[${globalIndex}][price]" required placeholder="Enter price">
+                                <input type="hidden" class="amount-input" name="items[${globalIndex}][amount]" value="0">
                                 <input type="hidden" name="items[${globalIndex}][supplier_id]" value="${supplier.id}">
                                 <input type="hidden" name="items[${globalIndex}][product_id]" value="${selectedId}">
                             </div>
-                        </div>`;
+                        </div>
+                    </div>`;
                         $container.append(html);
                         globalIndex++;
                     });
+
+                    // Bind calculator for newly added supplier rows
+                    bindAmountCalculation($container);
                 } else {
                     $container.append(`
-                <div class="sub-product-row row-bottom">
-                    <div>No supplier found.</div>
-                </div>
-            `);
+                    <div class="sub-product-row row-bottom">
+                        <div>No supplier found.</div>
+                    </div>
+                `);
                 }
             });
         }
 
-        // Bind initial product row
+        function bindAmountCalculation($context) {
+            $context.find('.qty-input, .price-input').off('input').on('input', function() {
+                const $inputs = $(this).closest('.supplier-inputs');
+                const quantity = parseFloat($inputs.find('.qty-input').val()) || 0;
+                const price = parseFloat($inputs.find('.price-input').val()) || 0;
+                const amount = quantity * price;
+                $inputs.find('.amount-input').val(amount.toFixed(2));
+
+                updateTotalAmount();
+            });
+        }
+
+        function updateTotalAmount() {
+            let total = 0;
+            $('.amount-input').each(function() {
+                total += parseFloat($(this).val()) || 0;
+            });
+
+            const totalRounded = total.toFixed(2);
+            $('#totalAmount').text(totalRounded);
+
+            // Convert total to paise for Stripe (e.g., ₹30.50 → 3050)
+            const amountInPaise = Math.round(total * 100);
+
+            // Update payment link
+            $('#payNowLink').attr('href', 'payment.php?totalAmount=' + amountInPaise);
+        }
+
+
+
+        // Bind initial row
         bindProductSelect($('.product-row'));
+        bindAmountCalculation($('.product-row'));
 
         // Handle Add Product button
         $('#addProductBtn').on('click', function() {
             const $lastRow = $('#productList .product-row').last();
             const $clone = $lastRow.clone();
-            const $errMsg = $('#errMsg');
-            $errMsg.empty();
-            // Add margin to the clone row
+            $('#errMsg').empty();
+
             $clone.css({
                 'margin-top': '10px'
             });
-
             $lastRow.append(`<div id="DivHR"></div>`);
-            // console.log($clone);
-            // Clear inputs in the cloned row
+
             $clone.find('select').val('');
             $clone.find('.supplier-container').empty();
 
-            // Append the clone
             $('#productList').append($clone);
 
-            // Re-bind events to the new cloned row
+            // Re-bind to new cloned row
             bindProductSelect($clone);
+            bindAmountCalculation($clone);
         });
 
+        // Handle Remove Product button
         $('#productList').on('click', '.btnRemoveProduct', function() {
             if ($('#productList .product-row').length > 1) {
                 $(this).closest('.product-row').remove();
@@ -186,7 +227,9 @@ while ($row = $result->fetch_assoc()) {
             }
         });
     </script>
+
     <script src="public/js/script.js"></script>
+
 </body>
 
 </html>

@@ -1,0 +1,56 @@
+Step-by-Step: Manual Installation of Stripe PHP SDK (No Composer)
+🔹 1. Download the Stripe PHP Library
+Go to the official GitHub repo:
+
+📦 https://github.com/stripe/stripe-php/releases
+
+Click on the latest release (e.g., v12.x.x)
+
+Download the Source code (.zip)
+
+🔹 2. Extract It Into Your Project Folder
+Unzip the file
+
+Rename the extracted folder to stripe-php (optional for clarity)
+
+Your project should now look like this:
+
+swift
+Copy
+Edit
+/stripe-payment/
+├── checkout.html
+├── charge.php
+└── stripe-php/
+    ├── lib/
+    └── init.php (inside lib or root)
+🔹 3. Modify charge.php to Use Manual Include
+👉 Updated charge.php
+php
+Copy
+Edit
+<?php
+require_once 'stripe-php/init.php'; // Adjust path if needed
+
+\Stripe\Stripe::setApiKey('sk_test_YOUR_SECRET_KEY'); // Replace with your test secret key
+
+$token = $_POST['stripeToken'];
+
+try {
+    $charge = \Stripe\Charge::create([
+        'amount' => 500, // ₹5.00 (500 paise)
+        'currency' => 'inr',
+        'description' => 'Manual Stripe Charge',
+        'source' => $token,
+    ]);
+    echo "<h2>✅ Payment Successful!</h2>";
+} catch (Exception $e) {
+    echo "<h2>❌ Error: " . $e->getMessage() . "</h2>";
+}
+?>
+🔹 4. You're Done! 🎉
+Open checkout.html in your browser.
+
+Fill the test payment form (use card 4242 4242 4242 4242)
+
+It will redirect to charge.php and show success.

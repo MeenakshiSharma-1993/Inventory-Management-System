@@ -210,8 +210,10 @@ while ($historyRow = mysqli_fetch_assoc($resultHistory)) {
                     <?php
                     if (isset($_SESSION['error'])) {
                         $error = $_SESSION['error'];
-                        echo "<div id='errMsg'>$error</div>";
-                        unset($_SESSION['error']);
+                        if ($error != "") {
+                            echo "<div id='errMsg'>$error</div>";
+                            unset($_SESSION['error']);
+                        }
                     }
                     ?>
                 <?php } else {

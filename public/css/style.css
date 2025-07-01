@@ -86,7 +86,7 @@
   text-align: center;
   background-color: #f4f6f8;
   padding: 2%;
-  width: 100%;
+  width: 95%;
   font-weight: bold;
   margin-top: 10px;
 }
@@ -438,7 +438,7 @@ ul.menu li a i {
 
 header {
   background: #f0f0f0;
-  padding: 15px 20px;
+  padding: 9px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -697,7 +697,7 @@ button:hover {
   /* border-radius: 4px; */
   color: #000;
   user-select: none;
-  width:52px;
+  width: 52px;
   cursor: pointer;
 }
 
@@ -752,6 +752,14 @@ button:hover {
 /* product-order CSS start*/
 #productList li {
   list-style: none;
+}
+
+.payBtn {
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .product-row {
