@@ -16,7 +16,7 @@ $products = $_SESSION['product_data'];
 
 $suppliers = $_SESSION['supplier_data'];
 
-$query = "SELECT * FROM supplier AS s right JOIN productsupplier AS ps ON s.id = ps.supplier";
+$query = "SELECT product,supplier,amount,supplier_name FROM supplier AS s JOIN productsupplier AS ps ON s.id = ps.supplier join products as p on p.id=ps.product;";
 $result = $conn->query($query);
 
 // --- Build product-supplier map in PHP ---
@@ -24,13 +24,15 @@ $productSupplierMap = [];
 while ($row = $result->fetch_assoc()) {
     $productId = $row['product'];
     $supplierId = $row['supplier']; // this is from productsupplier.supplier
+    $amount = $row['amount'];
     $supplierName = $row['supplier_name'];
     if (!isset($productSupplierMap[$productId])) {
         $productSupplierMap[$productId] = [];
     }
     $productSupplierMap[$productId][] = [
         'id' => $supplierId,
-        'name' => $supplierName
+        'name' => $supplierName,
+        'amount' => $amount
     ];
 }
 
@@ -87,6 +89,7 @@ while ($row = $result->fetch_assoc()) {
                                     </li>
                                 </ul>
                             </div>
+                            
                             <div style="margin-top: 15px;">
                                 <strong style="margin-top:10px">Total Amount: ₹ <span id="totalAmount">0.00</span></strong>
                                 <a href="#" class="formBtn submitBtn payBtn" style="margin-top:0" id="payNowLink" target="_blank">Pay Now</a>
@@ -94,12 +97,14 @@ while ($row = $result->fetch_assoc()) {
                             </div>
                         </form>
 
-
+                        <br>
                         <?php
                         if (isset($_SESSION['error'])) {
                             $error = $_SESSION['error'];
-                            echo "<div id='errMsg'>$error</div>";
-                            unset($_SESSION['error']);
+                            if ($error != "") {
+                                echo "<div id='errMsg'>$error</div>";
+                                unset($_SESSION['error']);
+                            }
                         }
                         ?>
                     </div>
@@ -124,6 +129,7 @@ while ($row = $result->fetch_assoc()) {
             $context.find('.product-select').off('change').on('change', function() {
                 const selectedId = $(this).val();
                 const suppliers = productSupplierMap[selectedId] || [];
+                console.log(suppliers);
 
                 const $row = $(this).closest('.product-row');
                 const $container = $row.find('.supplier-container');
@@ -132,7 +138,7 @@ while ($row = $result->fetch_assoc()) {
 
                 if (suppliers.length > 0) {
                     suppliers.forEach(supplier => {
-                        const html = `
+                        const html = `<br>
                     <div class="sub-product-row row-bottom">
                         <div>
                             <div class="supplier-display">${supplier.name}</div>
@@ -140,8 +146,8 @@ while ($row = $result->fetch_assoc()) {
                         <div style="width: 50%;" class="supplier-inputs">
                             <div style="display:flex; gap: 5px;">
                                 <input type="number" class="qty-input" name="items[${globalIndex}][quantity]" required placeholder="Enter quantity">
-                                <input type="number" class="price-input" name="items[${globalIndex}][price]" required placeholder="Enter price">
-                                <input type="hidden" class="amount-input" name="items[${globalIndex}][amount]" value="0">
+                                <input type="number" class="price-input" name="items[${globalIndex}][price]" value="${supplier.amount}" required placeholder="Enter price">
+                                <input type="hidden" class="amount-input" name="items[${globalIndex}][amount]" value="${supplier.amount}">
                                 <input type="hidden" name="items[${globalIndex}][supplier_id]" value="${supplier.id}">
                                 <input type="hidden" name="items[${globalIndex}][product_id]" value="${selectedId}">
                             </div>

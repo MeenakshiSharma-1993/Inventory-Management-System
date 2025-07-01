@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $product_name = $_POST["product_name"];
         $description = $_POST["description"];
+        $amount = $_POST["amount"];
         $created_by = $_SESSION['user_Id'];
         $img = '';
         if (isset($_FILES['img']) && $_FILES['img']['error'] == 0) {
@@ -40,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updated_at = date("Y-m-d H:i:s");
         try {
             // add data in products table
-            $query = "INSERT INTO products (product_name, description, img , created_by , created_at, Updated_at) VALUES(?,?,?,?,?,?)";
-            $params = array($product_name, $description, $img, $created_by, $created_at, $updated_at);
+            $query = "INSERT INTO products (product_name, description,amount, img , created_by , created_at, Updated_at) VALUES(?,?,?,?,?,?,?)";
+            $params = array($product_name, $description, $amount, $img, $created_by, $created_at, $updated_at);
             $sentPageAdd = "Location: ../../product-add.php";
             $pageName = "Product";
             AddData($query, $params, $sentPageAdd, $pageName);

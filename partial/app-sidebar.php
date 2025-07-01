@@ -18,6 +18,9 @@
             <li class="liMainMenu" title="Report"><a href="./report.php">
                     <i class="fa fa-file"></i><span class="menu-text"> Report</a></span>
             </li>
+            <li class="liMainMenu" title="Myorders"><a href="./my-orders.php">
+                    <i class="fa fa-shopping-cart"></i><span class="menu-text"> My Order</a></span>
+            </li>
             <li class="liMainMenu" title="Product"><a href="#"><i class="fa-solid fa-tag"></i>
                     <span class="menu-text liSubMenu_Link"> Product
                         <i class="fa fa-angle-left leftArrowIcon liSubMenu_Link"></i>

@@ -17,6 +17,7 @@ if (isset($_POST['update_product'])) {
     $product_id   = intval($_POST['product_id']);
     $product_name = $_POST['product_name'];
     $description  = $_POST['description'];
+    $amount  = $_POST['amount'];
     $suppliers    = isset($_POST['supplier']) ? $_POST['supplier'] : [];
     $updated_at   = date("Y-m-d H:i:s");
 
@@ -36,9 +37,9 @@ if (isset($_POST['update_product'])) {
     }
 
     // Update product
-    $query = "UPDATE products SET product_name = ?, description = ?, img = ?, updated_at = ? WHERE id = ?";
+    $query = "UPDATE products SET product_name = ?,amount= ?, description = ?, img = ?, updated_at = ? WHERE id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssssi", $product_name, $description, $img, $updated_at, $product_id);
+    $stmt->bind_param("sisssi", $product_name,$amount, $description, $img, $updated_at, $product_id);
     $stmt->execute();
     $stmt->close();
 

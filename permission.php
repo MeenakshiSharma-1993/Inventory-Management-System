@@ -48,7 +48,7 @@
 
     <tr>
         <td class="module">POINT OF SALE</td>
-        <td><span class="permission" data-value="pon">Has Access</span></td>
+        <td><span class="permission" data-value="payment">Payment</span></td>
         <td colspan="4"></td>
     </tr>
 </table>

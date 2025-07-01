@@ -49,15 +49,16 @@ $allSuppliers = $conn->query("SELECT * FROM supplier")->fetch_all(MYSQLI_ASSOC);
                             <h3>Edit Product</h3>
                             <form action="" class="form-box" method="POST" enctype="multipart/form-data">
                                 <input type="hidden" name="product_id" id="editId">
-                                <label>Product Name:<input name="product_name" id="editProduct" required></label><br>
-                                <label>Description:<input name="description" id="editDesc" required></label><br>
-                                <label>Suppliers:<br>
+                                <label>Product Name:<input name="product_name" id="editProduct" required></label>
+                                <label>Description:<input name="description" id="editDesc" required></label>
+                                <label>Amount:<input name="amount" id="editAmount" required></label>
+                                <label>Suppliers:
                                     <select id="supplier" name="supplier[]" multiple>
                                         <?php foreach ($allSuppliers as $sup) : ?>
                                             <option value="<?= $sup['id']; ?>"> <?= htmlentities($sup['supplier_name']); ?> </option>
                                         <?php endforeach ?>
                                     </select>
-                                </label><br>
+                                </label>
                                 <div class="ProductImage">
                                     <div class="SubProductImage">
                                         <label>Old Image:</label>
@@ -87,8 +88,9 @@ $allSuppliers = $conn->query("SELECT * FROM supplier")->fetch_all(MYSQLI_ASSOC);
                                     <th>Product Name</th>
                                     <th>Description</th>
                                     <th>Suppliers</th>
-                                    <th>Image</th>
                                     <th>Stock</th>
+                                    <th>Amount</th>
+                                    <th>Image</th>
                                     <th>Created At</th>
                                     <th>Actions</th>
                                 </tr>
@@ -128,6 +130,7 @@ $allSuppliers = $conn->query("SELECT * FROM supplier")->fetch_all(MYSQLI_ASSOC);
                                                 <?php endif ?>
                                             </td>
                                             <td><?= htmlentities($product['stock']) ?></td>
+                                            <td><?= htmlentities($product['amount']) ?></td>
                                             <td><img src="public/uploads/<?= $product['img']; ?>" width="50" height="50" alt="Product Image"></td>
                                             <td><?= date('m, d, y @ h:i:s A', strtotime($product['created_at'])) ?></td>
                                             <td>
@@ -138,6 +141,7 @@ $allSuppliers = $conn->query("SELECT * FROM supplier")->fetch_all(MYSQLI_ASSOC);
                                                         data-id="<?= $product['id']; ?>"
                                                         data-name="<?= htmlentities($product['product_name']); ?>"
                                                         data-img="<?= htmlentities($product['img']); ?>"
+                                                        data-amount="<?= htmlentities($product['amount']); ?>"
                                                         data-description="<?= htmlentities($product['description']); ?>"
                                                         data-suppliers='<?= $sup_ids_json ?>'>
                                                         <i class='fa fa-pencil'></i>Edit</a> |
@@ -184,6 +188,7 @@ $allSuppliers = $conn->query("SELECT * FROM supplier")->fetch_all(MYSQLI_ASSOC);
                 document.getElementById('editId').value = this.dataset.id;
                 document.getElementById('editProduct').value = this.dataset.name;
                 document.getElementById('editDesc').value = this.dataset.description;
+                document.getElementById('editAmount').value = this.dataset.amount;
                 document.getElementById('editPreview').src = "public/uploads/" + this.dataset.img;
 
                 // Set multiselect

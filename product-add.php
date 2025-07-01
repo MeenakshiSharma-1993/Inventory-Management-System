@@ -33,64 +33,69 @@ if (!isset($user)) {
         <div class="main p-4">
             <?php include 'partial/app-topnav.php'; ?>
             <div class="content-container">
-<?php       
-                $errMsg="";         
+                <?php
+                $errMsg = "";
                 $permissions = $_SESSION['permissions'];
                 $permission_values = explode(',', $permissions[0]['permissions']);
                 if (in_array("product-create", $permission_values)) { ?>
-                <!-- Create Product Section -->
-                <div class="add-user mb-4">
-                    <h3 class="add-user mb-4 fs-4 fw-semibold">
-                        <i class="fas fa-box-open me-2"></i>Add Product
-                    </h3>
-                    <div class="form-box p-4 border rounded shadow">
-                        <form action="public/Database/add.php" enctype="multipart/form-data" method="POST">
-                            <input type="hidden" name="form_name" value="Product-add">
+                    <!-- Create Product Section -->
+                    <div class="add-user mb-4">
+                        <h3 class="add-user mb-4 fs-4 fw-semibold">
+                            <i class="fas fa-box-open me-2"></i>Add Product
+                        </h3>
+                        <div class="form-box p-4 border rounded shadow">
+                            <form action="public/Database/add.php" enctype="multipart/form-data" method="POST">
+                                <input type="hidden" name="form_name" value="Product-add">
 
-                            <label for="product_name" class="form-label">Product Name</label>
-                            <input id="product_name" name="product_name" required class="form-control mb-3" type="text">
+                                <label for="product_name" class="form-label">Product Name</label>
+                                <input id="product_name" name="product_name" required class="form-control mb-3" type="text">
 
-                            <label for="description" class="form-label">Description</label>
-                            <textarea id="description" name="description" rows="3" class="form-control mb-3"></textarea>
+                                <label for="amount" class="form-label">amount</label>
+                                <input id="amount" name="amount" required class="form-control mb-3" type="number">
 
-                            <label for="supplier" class="form-label">suppliers</label>
-                            <select id="supplier" name="supplier[]" class=" form-select mb-3" multiple>
-                                <option disabled selected>Select Supplier</option>
-                                <?php
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" name="description" rows="3" class="form-control mb-3"></textarea>
 
-                                include './public/Database/showData.php';
-                                if (isset($_SESSION['supplier_data']) && is_array($_SESSION['supplier_data'])) {
-                                    foreach ($_SESSION['supplier_data'] as $supplier) {
-                                        echo "<option value='" . $supplier['id'] . "'>" . $supplier['supplier_name'] . "</option>";
+                                <label for="supplier" class="form-label">suppliers</label>
+                                <select id="supplier" name="supplier[]" class=" form-select mb-3" multiple>
+                                    <option disabled selected>Select Supplier</option>
+                                    <?php
+
+                                    include './public/Database/showData.php';
+                                    if (isset($_SESSION['supplier_data']) && is_array($_SESSION['supplier_data'])) {
+                                        foreach ($_SESSION['supplier_data'] as $supplier) {
+                                            echo "<option value='" . $supplier['id'] . "'>" . $supplier['supplier_name'] . "</option>";
+                                        }
+                                    } else {
+                                        echo "<option disabled>No suppliers available</option>";
                                     }
-                                } else {
-                                    echo "<option disabled>No suppliers available</option>";
-                                }
-                                ?>
-                            </select>
+                                    ?>
+                                </select>
 
-                            <label for="img" class="form-label">Product Image</label>
-                            <input id="img" name="img" accept="image/*" class="form-control mb-4" type="file">
+                                <label for="img" class="form-label">Product Image</label>
+                                <input id="img" name="img" accept="image/*" class="form-control mb-4" type="file">
 
-                            <button type="submit" class="formBtn btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>Add Product
-                            </button>
-                        </form>
+                                <button type="submit" class="formBtn btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Add Product
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
 
-                <?php
-                if (isset($_SESSION['error'])) {
-                    $error = $_SESSION['error']; ?>
-                    <div id='errMsg' class='alert alert-warning mt-4'><?= $error; ?></div>
-                <?php unset($_SESSION['error']);
-                }
-                ?>
-                 <?php } else  {
-                        $errMsg = "You Do not have permission to Add Product.";
+                    <?php
+                    if (isset($_SESSION['error'])) {
+                        $error = $_SESSION['error']; ?>
+                        <div id='errMsg' class='alert alert-warning mt-4'><?= $error; ?></div>
+                    <?php unset($_SESSION['error']);
                     }
-                
-                if($errMsg!=""){echo "<div id='errMsg'>$errMsg</div>";};
+                    ?>
+                <?php } else {
+                    $errMsg = "You Do not have permission to Add Product.";
+                }
+
+                if ($errMsg != "") {
+                    echo "<div id='errMsg'>$errMsg</div>";
+                };
                 ?>
             </div>
         </div>
