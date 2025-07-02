@@ -197,8 +197,6 @@ while ($row = $result->fetch_assoc()) {
             $('#payNowLink').attr('href', 'payment.php?totalAmount=' + amountInPaise);
         }
 
-
-
         // Bind initial row
         bindProductSelect($('.product-row'));
         bindAmountCalculation($('.product-row'));

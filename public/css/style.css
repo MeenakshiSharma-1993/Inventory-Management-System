@@ -754,7 +754,8 @@ button:hover {
   list-style: none;
 }
 
-.payBtn {
+#payNowLink {
+  background-color: #f83a3a;
   text-decoration: none;
   text-align: center;
   display: flex;

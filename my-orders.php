@@ -10,19 +10,13 @@ if (!isset($user)) {
     echo "<script>console.log('User logged in dashboard page: " . $user . "');</script>";
 }
 
-// DELETE supplier
-include './public/Database/delete.php';
-
-// UPDATE supplier
-include './public/Database/update.php';
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>View Supplier</title>
+    <title>My Orders</title>
     <link rel="stylesheet" href="public/css/style.css">
     <script src="https://kit.fontawesome.com/dfec668964.js" crossorigin="anonymous"></script>
 </head>
@@ -47,53 +41,38 @@ include './public/Database/update.php';
                         <div class="add-user">
                             <h3><i class="fas fa-shopping-cart"></i> My Orders</h3>
                         </div>
-                        <table>
+                        <table style="width: 70%;margin: auto;">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>Sr No</th>
                                     <th>Supplier Name</th>
                                     <th>Supplier Location</th>
-                                    <th>EMAIL</th>
-                                    <th>CREATED AT</th>
-                                    <th>UPDATED AT</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                include "./public/Database/ShowData.php";
+                                $count = 0;
+                                $query = "SELECT s.supplier_name, SUM(po.quantity_received * p.amount) AS total_amount 
+                                        FROM order_product po 
+                                        JOIN supplier s ON po.supplier = s.id 
+                                        JOIN products p ON po.product = p.id 
+                                        GROUP BY s.supplier_name";
+                                $result = mysqli_query($conn, $query);
+                                
+                                if (mysqli_num_rows($result) > 0) {
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $amountInPaise = $row['total_amount'] * 100;
 
-                                if (isset($_SESSION['supplier_data']) && is_array($_SESSION['supplier_data'])) {
-                                    $update_data = $_SESSION['supplier_data'];
-                                    $count = 0;
-                                    foreach ($update_data as $supplier1) {
-                                        $supplierid = $supplier1['id'];
-                                        echo "<tr>
-                                            <td>" . ++$count . "</td>
-                                            <td>" . $supplier1['supplier_name'] . "</td>
-                                            <td>" . $supplier1['supplier_location'] . "</td>
-                                            <td>" . $supplier1['email'] . "</td>
-                                            <td>" . date('m, d, y @ h:i:s A', strtotime($supplier1['created_at'])) . "</td>
-                                            <td>" . date('m, d, y @ h:i:s A', strtotime($supplier1['updated_at'])) . "</td>
-                                            <td>";
-                                        if (in_array("supplier-edit", $permission_values)) {
-
-                                            echo "<a href='#' class='edit-btn'
-                                        data-id='" . $supplier1['id'] . "'
-                                        data-suppname='" . htmlspecialchars($supplier1['supplier_name'], ENT_QUOTES) . "'
-                                        data-supplocation='" . htmlspecialchars($supplier1['supplier_location'], ENT_QUOTES) . "'
-                                        data-email='" . htmlspecialchars($supplier1['email'], ENT_QUOTES) . "'>
-                                        <i class='fa fa-pencil'></i>Edit</a>";
-                                        }
-                                        if (in_array("supplier-delete", $permission_values)) {
-
-                                            echo "<a href='?delete_supplier=$supplierid' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete " . $supplier1["supplier_name"] . ' ' . $supplier1['supplier_location']  . "?');\"><i class='fa fa-trash'></i>Delete</a>
-                                            </td>
-                                        </tr>";
-                                        }
+                                        echo "<tr><td>" . ++$count . "</td>" .
+                                            "<td>" . $row['supplier_name'] . "</td>" .
+                                            "<td>" . $row['total_amount'] . "</td>" .
+                                            "<td style='display:flex;justify-content:center'>
+                                                  <a href='payment.php?totalAmount=$amountInPaise' class='formBtn submitBtn' style='margin-top:0' id='payNowLink' target='_blank' onclick=\"return confirm('Are you sure? ');\">
+                                                    <i class=\"fa-brands fa-cc-amazon-pay\"></i>Pay Now</a>
+                                             </td>
+                                             </tr>";
                                     }
-                                } else {
-                                    echo "<tr><td colspan='7'>No users found.</td></tr>";
                                 }
                                 ?>
                             </tbody>
@@ -116,7 +95,7 @@ include './public/Database/update.php';
                 }
                 ?>
             <?php } else {
-                $errMsg = "You Do not have permission to View Supplier.";
+                $errMsg = "You Do not have permission to my orders.";
             }
 
             if ($errMsg != "") {
@@ -127,5 +106,10 @@ include './public/Database/update.php';
     </div>
 </body>
 <script src="public/js/script.js"></script>
+<script>
+    const amountInPaise = Math.round(total * 100);
+    // Update payment link
+    $('#payNowLink').attr('href', 'payment.php?totalAmount=' + amountInPaise);
+</script>
 
 </html>
